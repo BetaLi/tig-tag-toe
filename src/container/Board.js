@@ -4,26 +4,22 @@ import '../App.css';
 
 class Board extends Component {
     renderSquare(i){
-        return <Square style={this.props.style} value={this.props.squares[i]} onClick={()=>this.props.onClick(i)}/>
+        return <Square style={this.props.style[i]} value={this.props.squares[i]} onClick={()=>this.props.onClick(i)}/>
     }
     render(){
+            const row = [0,3,6];
+            const squares = row.map((item,step)=>{
+                return (
+                    <div className="board-row" key={step}>
+                        {this.renderSquare(item)}
+                        {this.renderSquare(item+1)}
+                        {this.renderSquare(item+2)}
+                    </div>
+                )
+            });
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+                {squares}
             </div>
         )
 
@@ -43,7 +39,7 @@ export function calculateWinner(squares) {
     for (let i = 0; i < lines.length; i++) {
         const [a, b, c] = lines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return squares[a];
+            return {winner:squares[a],grid:[a,b,c]};
         }
     }
     return null;

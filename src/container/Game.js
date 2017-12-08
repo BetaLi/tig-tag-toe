@@ -8,45 +8,55 @@ class Game extends Component{
         this.state={
             history:[{
                 squares:new Array(9).fill(null),
+                styleObj:new Array(9).fill({color:'black'}),
             }],
             stepNumber:0,
             xIsNext:true,
-            styleObj:{
-                color:'black',
-            }
         }
     }
+
     handleClick(i){
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
-        const current = history[history.length - 1];
+        const current = history[history.length-1];
         const squares = current.squares.slice();
-        if (calculateWinner(squares) || squares[i]) {
-            this.setState({
-                styleObj:{
-                    color:'red',
-                }
-            });
+        const winner = calculateWinner(squares);
+        console.log(winner);
+
+        if (winner) {
+            let newStyle = current.styleObj;
+            if(winner){
+                winner.grid.map((item) => {
+                    newStyle[item] = {color: 'red'};
+                });
+                this.setState({styleObj: newStyle});
+            }
             return;
         }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             history: history.concat([{
                 squares: squares,
+                styleObj:{
+                    color:'black',
+                }
             }]),
             stepNumber: history.length,
             xIsNext:!this.state.xIsNext,
         });
+
+
     }
-    jumpTo(step) {
+    jumpTo(move) {
         this.setState({
-            stepNumber: step,
-            xIsNext: (step % 2) === 0,
+            stepNumber: move,
+            xIsNext: (move % 2) === 0,
         });
     }
     render(){
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
+        console.log(winner);
 
         const moves = history.map((step, move) => {
             const desc = move ?
@@ -62,7 +72,7 @@ class Game extends Component{
         let status;
 
         if (winner) {
-            status = 'Winner: ' + winner;
+            status = 'Winner: ' + winner.winner;
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
@@ -70,7 +80,7 @@ class Game extends Component{
                 <div className="game">
                     <div className="game-board">
                         <Board
-                            style={this.state.styleObj}
+                            style={current.styleObj}
                             squares={current.squares}
                             onClick={(i) => this.handleClick(i)}
                         />
