@@ -27,6 +27,7 @@ class Game extends Component{
             if(winner){
                 winner.grid.map((item) => {
                     newStyle[item] = {color: 'red'};
+                    return item;
                 });
                 this.setState({styleObj: newStyle});
             }
